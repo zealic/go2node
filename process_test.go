@@ -13,6 +13,9 @@ func TestExec_Reader(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer func() {
+		cmd.Process.Kill()
+	}()
 
 	msg := <-channel.Reader
 	const expectedContent = "{\"hello\":\"123\"}\n"
@@ -29,6 +32,9 @@ func TestExec_Writer(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer func() {
+		cmd.Process.Kill()
+	}()
 
 	msg := &Message{
 		Data:  []byte(`{"cmd": "NODE_HANDLE", "type": "net.Socket", "msg": {"name": 10098}}` + "\n"),

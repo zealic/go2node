@@ -13,6 +13,9 @@ func TestExecNode_Reader(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer func() {
+		cmd.Process.Kill()
+	}()
 
 	msg := <-channel.Reader
 	const expectedContent = `{"black":"heart"}` + "\n"
@@ -29,6 +32,9 @@ func TestExecNode_Writer(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer func() {
+		cmd.Process.Kill()
+	}()
 
 	msg := &NodeMessage{
 		Message: `65535`,
