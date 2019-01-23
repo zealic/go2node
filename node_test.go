@@ -36,18 +36,18 @@ func TestExecNode_Writer(t *testing.T) {
 		cmd.Process.Kill()
 	}()
 
+	sp, _ := Socketpair()
 	msg := &NodeMessage{
 		Message: `65535`,
-		Handle:  os.Stdout,
+		Handle:  sp[0],
 	}
 	channel.Writer <- msg
 
 	msg = <-channel.Reader
-	if string(msg.Message) != `"65535"` {
+	if string(msg.Message) != `{"value":"6553588"}` {
 		t.Fatal("Message not matched: ", msg.Message)
 	}
 	if msg.Handle.Fd() == 0 {
 		t.Fatal("Handle is empty")
 	}
-	cmd.Wait()
 }

@@ -8,7 +8,7 @@ function reader() {
 
 function writer() {
   process.on("message", function (msg, handle) {
-    process.send(`65535`, handle);
+    process.send({value:"6553588"}, handle);
   });
 }
 
