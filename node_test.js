@@ -1,9 +1,7 @@
 const METHOD = process.argv.slice(2)[0];
 
 function reader() {
-  process.send({
-    black: "heart"
-  });
+  process.send({black: "heart"});
 }
 
 function writer() {

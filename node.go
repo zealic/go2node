@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 // NodeChannel node ipc channel
@@ -87,8 +88,9 @@ func (c *NodeChannel) read(ipc *IpcChannel,
 		if len(msg.Files) > 0 {
 			handle = msg.Files[0]
 		}
+		data := strings.TrimRight(string(msg.Data), "\n")
 		readChan <- &NodeMessage{
-			Message: string(msg.Data),
+			Message: data,
 			Handle:  handle,
 		}
 	}

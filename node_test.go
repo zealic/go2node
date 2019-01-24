@@ -18,7 +18,7 @@ func TestExecNode_Reader(t *testing.T) {
 	}()
 
 	msg := <-channel.Reader
-	const expectedContent = `{"black":"heart"}` + "\n"
+	const expectedContent = `{"black":"heart"}`
 	if strings.Compare(string(msg.Message), expectedContent) != 0 {
 		t.Fatal("Message not matched: ", string(msg.Message))
 	}
