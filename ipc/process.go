@@ -7,8 +7,6 @@ import (
 	"os/exec"
 )
 
-const nodeChannelID = "NODE_CHANNEL_FD"
-
 // IpcChannel ipc channel
 type IpcChannel struct {
 	Reader <-chan *Message
@@ -16,7 +14,7 @@ type IpcChannel struct {
 }
 
 // Exec execute new nodejs child process with ipc channel
-func Exec(cmd *exec.Cmd) (*IpcChannel, error) {
+func Exec(cmd *exec.Cmd, fdEnvVarName string) (*IpcChannel, error) {
 	fds, err := Socketpair()
 	if err != nil {
 		return nil, err
@@ -25,9 +23,7 @@ func Exec(cmd *exec.Cmd) (*IpcChannel, error) {
 	remoteSocket := fds[1]
 
 	cmd.ExtraFiles = append(cmd.ExtraFiles, remoteSocket)
-	cmd.Env = []string{
-		fmt.Sprintf("%s=%d", nodeChannelID, 2+len(cmd.ExtraFiles)),
-	}
+	cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%d", fdEnvVarName, 2+len(cmd.ExtraFiles)))
 
 	// Handle message
 	readChan := make(chan *Message, 1)
