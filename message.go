@@ -19,7 +19,8 @@ func normNodeMessage(msg *ipc.Message) *NodeMessage {
 	if len(msg.Files) > 0 {
 		handle = msg.Files[0]
 	}
-	data := strings.TrimRight(string(msg.Data), "\n")
+
+	data := strings.TrimSuffix(string(msg.Data), "\n")
 	return &NodeMessage{
 		Message: data,
 		Handle:  handle,
