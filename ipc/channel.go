@@ -7,14 +7,14 @@ import (
 	"os/exec"
 )
 
-// IpcChannel ipc channel
-type IpcChannel struct {
+// Channel ipc channel
+type Channel struct {
 	Reader <-chan *Message
 	Writer chan<- *Message
 }
 
 // Exec execute new nodejs child process with ipc channel
-func Exec(cmd *exec.Cmd, fdEnvVarName string) (*IpcChannel, error) {
+func Exec(cmd *exec.Cmd, fdEnvVarName string) (*Channel, error) {
 	fds, err := Socketpair()
 	if err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func Exec(cmd *exec.Cmd, fdEnvVarName string) (*IpcChannel, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &IpcChannel{readChan, writeChan}, nil
+	return &Channel{readChan, writeChan}, nil
 }
 
 func readIpcMessage(fd *os.File, msgChan chan *Message) {

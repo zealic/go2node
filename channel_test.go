@@ -9,14 +9,25 @@ import (
 	"github.com/zealic/go2node/ipc"
 )
 
-func TestExecNode_Reader(t *testing.T) {
-	cmd := exec.Command("node", "node_test.js", "reader")
+const testFile = "channel_test.js"
+
+func execNodeFile(handler string) (*os.Process, *NodeChannel) {
+	cmd := exec.Command("node", testFile, handler)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
 	channel, err := ExecNode(cmd)
 	if err != nil {
-		t.Fatal(err)
+		panic(err)
 	}
+
+	return cmd.Process, channel
+}
+
+func TestExecNode_Reader(t *testing.T) {
+	proc, channel := execNodeFile("reader")
 	defer func() {
-		cmd.Process.Kill()
+		proc.Kill()
 	}()
 
 	msg := <-channel.Reader
@@ -27,15 +38,9 @@ func TestExecNode_Reader(t *testing.T) {
 }
 
 func TestExecNode_Writer(t *testing.T) {
-	cmd := exec.Command("node", "node_test.js", "writer")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	channel, err := ExecNode(cmd)
-	if err != nil {
-		t.Fatal(err)
-	}
+	proc, channel := execNodeFile("writer")
 	defer func() {
-		cmd.Process.Kill()
+		proc.Kill()
 	}()
 
 	sp, _ := ipc.Socketpair()

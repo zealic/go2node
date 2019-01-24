@@ -4,23 +4,16 @@ import (
 	"encoding/json"
 	"os"
 	"os/exec"
-	"strings"
 
 	"github.com/zealic/go2node/ipc"
 )
 
 // NodeChannel node ipc channel
 type NodeChannel struct {
-	Reader <-chan *NodeMessage
-	Writer chan<- *NodeMessage
-	queue  []*NodeMessage
-}
-
-// NodeMessage node ipc message
-type NodeMessage struct {
-	Message string
-	Handle  *os.File
-	nack    bool
+	Reader     <-chan *NodeMessage
+	Writer     chan<- *NodeMessage
+	ipcChannel *ipc.Channel
+	queue      []*NodeMessage
 }
 
 type rawNodeMessage struct {
@@ -41,21 +34,25 @@ func ExecNode(cmd *exec.Cmd) (*NodeChannel, error) {
 	return newNodeChannel(ipcChannel)
 }
 
-func newNodeChannel(ipc *ipc.IpcChannel) (*NodeChannel, error) {
+func newNodeChannel(ipc *ipc.Channel) (*NodeChannel, error) {
 	// Handle message
 	readChan := make(chan *NodeMessage, 1)
 	writeChan := make(chan *NodeMessage, 1)
-	channel := &NodeChannel{readChan, writeChan, []*NodeMessage{}}
-	go channel.read(ipc, readChan, writeChan)
-	go channel.write(ipc, writeChan)
+	channel := &NodeChannel{
+		Reader:     readChan,
+		Writer:     writeChan,
+		ipcChannel: ipc,
+		queue:      []*NodeMessage{}}
+	go channel.read(readChan, writeChan)
+	go channel.write(writeChan)
 
 	return channel, nil
 }
 
-func (c *NodeChannel) read(ipcChannel *ipc.IpcChannel,
+func (c *NodeChannel) read(
 	readChan chan *NodeMessage,
 	writeChan chan *NodeMessage) {
-	for msg := range ipcChannel.Reader {
+	for msg := range c.ipcChannel.Reader {
 		rawMessage := new(rawNodeMessage)
 		e := json.Unmarshal(msg.Data, rawMessage)
 		if e != nil {
@@ -65,7 +62,7 @@ func (c *NodeChannel) read(ipcChannel *ipc.IpcChannel,
 
 		switch rawMessage.Cmd {
 		case "NODE_HANDLE":
-			ipcChannel.Writer <- &ipc.Message{
+			c.ipcChannel.Writer <- &ipc.Message{
 				Data: []byte(`{"cmd":"NODE_HANDLE_ACK"}` + "\n"),
 			}
 			readChan <- &NodeMessage{
@@ -90,19 +87,7 @@ func (c *NodeChannel) read(ipcChannel *ipc.IpcChannel,
 	}
 }
 
-func normNodeMessage(msg *ipc.Message) *NodeMessage {
-	var handle *os.File
-	if len(msg.Files) > 0 {
-		handle = msg.Files[0]
-	}
-	data := strings.TrimRight(string(msg.Data), "\n")
-	return &NodeMessage{
-		Message: data,
-		Handle:  handle,
-	}
-}
-
-func (c *NodeChannel) write(ipcChannel *ipc.IpcChannel, msgChan chan *NodeMessage) {
+func (c *NodeChannel) write(msgChan chan *NodeMessage) {
 	for {
 		msg := <-msgChan
 		var ipcMsg *ipc.Message
@@ -136,6 +121,6 @@ func (c *NodeChannel) write(ipcChannel *ipc.IpcChannel, msgChan chan *NodeMessag
 		}
 
 		ipcMsg.Data = append(ipcMsg.Data, '\n')
-		ipcChannel.Writer <- ipcMsg
+		c.ipcChannel.Writer <- ipcMsg
 	}
 }
