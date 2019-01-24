@@ -5,6 +5,8 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/zealic/go2node/ipc"
 )
 
 // NodeChannel node ipc channel
@@ -29,14 +31,14 @@ type rawNodeMessage struct {
 
 // ExecNode execute new nodejs child process with ipc channel
 func ExecNode(cmd *exec.Cmd) (*NodeChannel, error) {
-	ipcChannel, e := Exec(cmd)
+	ipcChannel, e := ipc.Exec(cmd)
 	if e != nil {
 		return nil, e
 	}
 	return newNodeChannel(ipcChannel)
 }
 
-func newNodeChannel(ipc *IpcChannel) (*NodeChannel, error) {
+func newNodeChannel(ipc *ipc.IpcChannel) (*NodeChannel, error) {
 	// Handle message
 	readChan := make(chan *NodeMessage, 1)
 	writeChan := make(chan *NodeMessage, 1)
@@ -47,10 +49,10 @@ func newNodeChannel(ipc *IpcChannel) (*NodeChannel, error) {
 	return channel, nil
 }
 
-func (c *NodeChannel) read(ipc *IpcChannel,
+func (c *NodeChannel) read(ipcChannel *ipc.IpcChannel,
 	readChan chan *NodeMessage,
 	writeChan chan *NodeMessage) {
-	for msg := range ipc.Reader {
+	for msg := range ipcChannel.Reader {
 		rawMessage := new(rawNodeMessage)
 		e := json.Unmarshal(msg.Data, rawMessage)
 		if e != nil {
@@ -60,7 +62,7 @@ func (c *NodeChannel) read(ipc *IpcChannel,
 
 		switch rawMessage.Cmd {
 		case "NODE_HANDLE":
-			ipc.Writer <- &Message{
+			ipcChannel.Writer <- &ipc.Message{
 				Data: []byte(`{"cmd":"NODE_HANDLE_ACK"}` + "\n"),
 			}
 			readChan <- &NodeMessage{
@@ -85,7 +87,7 @@ func (c *NodeChannel) read(ipc *IpcChannel,
 	}
 }
 
-func normNodeMessage(msg *Message) *NodeMessage {
+func normNodeMessage(msg *ipc.Message) *NodeMessage {
 	var handle *os.File
 	if len(msg.Files) > 0 {
 		handle = msg.Files[0]
@@ -97,19 +99,19 @@ func normNodeMessage(msg *Message) *NodeMessage {
 	}
 }
 
-func (c *NodeChannel) write(ipc *IpcChannel, msgChan chan *NodeMessage) {
+func (c *NodeChannel) write(ipcChannel *ipc.IpcChannel, msgChan chan *NodeMessage) {
 	for {
 		msg := <-msgChan
-		var ipcMsg *Message
+		var ipcMsg *ipc.Message
 		if msg.Handle == nil { // Normal message
-			ipcMsg = &Message{
+			ipcMsg = &ipc.Message{
 				Data:  []byte(msg.Message),
 				Files: []*os.File{},
 			}
 		} else {
 			// Default use naked message
 			// NACK message will beo naked too
-			ipcMsg = &Message{
+			ipcMsg = &ipc.Message{
 				Data:  []byte(msg.Message),
 				Files: []*os.File{msg.Handle},
 			}
@@ -131,6 +133,6 @@ func (c *NodeChannel) write(ipc *IpcChannel, msgChan chan *NodeMessage) {
 		}
 
 		ipcMsg.Data = append(ipcMsg.Data, '\n')
-		ipc.Writer <- ipcMsg
+		ipcChannel.Writer <- ipcMsg
 	}
 }

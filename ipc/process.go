@@ -1,4 +1,4 @@
-package go2node
+package ipc
 
 import (
 	"fmt"

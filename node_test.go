@@ -5,6 +5,8 @@ import (
 	"os/exec"
 	"strings"
 	"testing"
+
+	"github.com/zealic/go2node/ipc"
 )
 
 func TestExecNode_Reader(t *testing.T) {
@@ -36,7 +38,7 @@ func TestExecNode_Writer(t *testing.T) {
 		cmd.Process.Kill()
 	}()
 
-	sp, _ := Socketpair()
+	sp, _ := ipc.Socketpair()
 	msg := &NodeMessage{
 		Message: `65535`,
 		Handle:  sp[0],
