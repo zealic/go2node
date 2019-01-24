@@ -54,7 +54,8 @@ func (c *NodeChannel) read(ipc *IpcChannel,
 		rawMessage := new(rawNodeMessage)
 		e := json.Unmarshal(msg.Data, rawMessage)
 		if e != nil {
-			goto RAW_MSG
+			//readChan <- normNodeMessage(msg)
+			panic(e)
 		}
 
 		switch rawMessage.Cmd {
@@ -79,20 +80,20 @@ func (c *NodeChannel) read(ipc *IpcChannel,
 		case "NODE_HANDLE_ACK":
 			c.queue = []*NodeMessage{}
 		default:
-			goto RAW_MSG
+			readChan <- normNodeMessage(msg)
 		}
-		continue
+	}
+}
 
-	RAW_MSG:
-		var handle *os.File
-		if len(msg.Files) > 0 {
-			handle = msg.Files[0]
-		}
-		data := strings.TrimRight(string(msg.Data), "\n")
-		readChan <- &NodeMessage{
-			Message: data,
-			Handle:  handle,
-		}
+func normNodeMessage(msg *Message) *NodeMessage {
+	var handle *os.File
+	if len(msg.Files) > 0 {
+		handle = msg.Files[0]
+	}
+	data := strings.TrimRight(string(msg.Data), "\n")
+	return &NodeMessage{
+		Message: data,
+		Handle:  handle,
 	}
 }
 
