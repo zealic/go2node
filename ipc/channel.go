@@ -26,16 +26,27 @@ func Exec(cmd *exec.Cmd, fdEnvVarName string) (*Channel, error) {
 	cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%d", fdEnvVarName, 2+len(cmd.ExtraFiles)))
 
 	// Handle message
-	readChan := make(chan *Message, 1)
-	go readIpcMessage(localSock, readChan)
-	writeChan := make(chan *Message, 1)
-	go writeIpcMessage(localSock, writeChan)
-
+	channel := makeChannel(localSock)
 	err = cmd.Start()
 	if err != nil {
 		return nil, err
 	}
-	return &Channel{readChan, writeChan}, nil
+
+	return channel, nil
+}
+
+// FromFD setup channel from parent passed fd
+func FromFD(fd *os.File) *Channel {
+	return makeChannel(fd)
+}
+
+func makeChannel(fd *os.File) *Channel {
+	// Handle message
+	readChan := make(chan *Message, 1)
+	go readIpcMessage(fd, readChan)
+	writeChan := make(chan *Message, 1)
+	go writeIpcMessage(fd, writeChan)
+	return &Channel{readChan, writeChan}
 }
 
 func readIpcMessage(fd *os.File, msgChan chan *Message) {

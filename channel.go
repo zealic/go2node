@@ -27,10 +27,10 @@ const nodeChannelFD = "NODE_CHANNEL_FD"
 // ExecNode execute new nodejs child process with ipc channel
 func ExecNode(cmd *exec.Cmd) (*NodeChannel, error) {
 	ipcChannel, e := ipc.Exec(cmd, nodeChannelFD)
-
 	if e != nil {
 		return nil, e
 	}
+
 	return newNodeChannel(ipcChannel)
 }
 
