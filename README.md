@@ -1,5 +1,6 @@
 [![Build Status][travis-image]][travis-url]
 [![GoDoc][godoc-image]][godoc-url]
+[![GitHub release](https://img.shields.io/github/release/zealic/go2node.svg)](https://github.com/zealic/go2node/releases/latest)
 
 # go2node
 
