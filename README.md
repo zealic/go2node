@@ -108,7 +108,7 @@ import (
 )
 
 func main() {
-	channel, err := go2node.RunAsNodeChilren()
+	channel, err := go2node.RunAsNodeChild()
 	if err != nil {
 		panic(err)
 	}

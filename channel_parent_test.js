@@ -4,7 +4,7 @@ const METHOD = process.argv.slice(2)[0];
 
 function spawnTest() {
   let gtest = cp.spawn('go',
-    ['test', '-tags', 'channel_children'], {
+    ['test', '-tags', 'channel_child'], {
       stdio: [1, 2, 3, 'ipc'] // ipc is required
     });
 
@@ -14,7 +14,7 @@ function spawnTest() {
   return gtest;
 }
 
-function channel_children() {
+function channel_child() {
   let child = spawnTest();
 
   child.on("message", function (msg, handle) {
@@ -31,7 +31,7 @@ function channel_children() {
 }
 
 let methods = {
-  channel_children: channel_children
+  channel_child: channel_child
 };
 
 methods[METHOD]();

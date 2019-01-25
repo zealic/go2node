@@ -1,4 +1,4 @@
-// +build channel_children
+// +build channel_child
 
 package go2node
 
@@ -10,10 +10,10 @@ import (
 	"github.com/zealic/go2node/ipc"
 )
 
-func TestRunAsNodeChilren(t *testing.T) {
+func TestRunAsNodeChild(t *testing.T) {
 	assert, require := assert.New(t), require.New(t)
 
-	channel, err := RunAsNodeChilren()
+	channel, err := RunAsNodeChild()
 	assert.NoError(err)
 
 	// Parent

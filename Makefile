@@ -5,7 +5,7 @@ OUTPUT?=$(PROJECT_NAME)
 
 test:
 	@go test ./...
-	node channel_parent_test.js channel_children
+	node channel_parent_test.js channel_child
 
 ensure:
 	@go mod download
