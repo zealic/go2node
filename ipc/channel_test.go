@@ -13,7 +13,7 @@ const nodeChannelFD = "NODE_CHANNEL_FD"
 
 const testFile = "channel_test.js"
 
-func execNodeFile(handler string) (*os.Process, *Channel) {
+func execNodeFile(handler string) (*os.Process, Channel) {
 	cmd := exec.Command("node", testFile, handler)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -34,6 +34,7 @@ func TestExec_Reader(t *testing.T) {
 		proc.Kill()
 	}()
 
-	msg := <-channel.Reader
+	msg, err := channel.Read()
+	require.NoError(err)
 	require.Equal(`{"hello":"123"}`+"\n", string(msg.Data))
 }

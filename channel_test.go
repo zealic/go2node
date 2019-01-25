@@ -12,7 +12,7 @@ import (
 
 const testFile = "channel_test.js"
 
-func execNodeFile(handler string) (*os.Process, *NodeChannel) {
+func execNodeFile(handler string) (*os.Process, NodeChannel) {
 	cmd := exec.Command("node", testFile, handler)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -26,13 +26,14 @@ func execNodeFile(handler string) (*os.Process, *NodeChannel) {
 }
 
 func TestExecNode_Reader(t *testing.T) {
-	_, require := assert.New(t), require.New(t)
+	assert, require := assert.New(t), require.New(t)
 	proc, channel := execNodeFile("reader")
 	defer func() {
 		proc.Kill()
 	}()
 
-	msg := <-channel.Reader
+	msg, err := channel.Read()
+	assert.NoError(err)
 	require.Equal(`{"black":"heart"}`, string(msg.Message))
 }
 
@@ -44,14 +45,16 @@ func TestExecNode_Writer(t *testing.T) {
 	}()
 
 	sp, err := ipc.Socketpair()
-	assert.NoError(err)
+	require.NoError(err)
 	msg := &NodeMessage{
 		Message: []byte(`65535`),
 		Handle:  sp[0],
 	}
-	channel.Writer <- msg
+	err = channel.Write(msg)
+	require.NoError(err)
 
-	msg = <-channel.Reader
+	msg, err = channel.Read()
+	require.NoError(err)
 	require.Equal(`{"value":"6553588"}`, string(msg.Message))
 	assert.NotNil(msg.Handle)
 }

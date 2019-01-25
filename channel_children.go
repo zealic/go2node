@@ -9,7 +9,7 @@ import (
 )
 
 // RunAsNodeChilren setup current process as node children process
-func RunAsNodeChilren() (*NodeChannel, error) {
+func RunAsNodeChilren() (NodeChannel, error) {
 	fdStr := os.Getenv(nodeChannelFD)
 	if len(fdStr) == 0 {
 		return nil, errors.New(nodeChannelFD + " is required.")
