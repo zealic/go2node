@@ -1,6 +1,7 @@
 package go2node
 
 import (
+	"encoding/json"
 	"os"
 	"strings"
 
@@ -9,9 +10,14 @@ import (
 
 // NodeMessage node ipc message
 type NodeMessage struct {
-	Message string
+	Message []byte
 	Handle  *os.File
 	nack    bool
+}
+
+// Unmarshal unmarshal json encoded message
+func (m *NodeMessage) Unmarshal(v interface{}) error {
+	return json.Unmarshal([]byte(m.Message), v)
 }
 
 func normNodeMessage(msg *ipc.Message) *NodeMessage {
@@ -22,7 +28,7 @@ func normNodeMessage(msg *ipc.Message) *NodeMessage {
 
 	data := strings.TrimSuffix(string(msg.Data), "\n")
 	return &NodeMessage{
-		Message: data,
+		Message: []byte(data),
 		Handle:  handle,
 	}
 }

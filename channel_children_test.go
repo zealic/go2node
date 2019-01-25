@@ -17,7 +17,7 @@ func TestRunAsNodeChilren(t *testing.T) {
 	assert.NoError(err)
 
 	// Parent
-	channel.Writer <- &NodeMessage{Message: `{"name":"parent"}`}
+	channel.Writer <- &NodeMessage{Message: []byte(`{"name":"parent"}`)}
 	msg := <-channel.Reader
 	require.Equal(`{"say":"We are one!"}`, string(msg.Message))
 
@@ -25,7 +25,7 @@ func TestRunAsNodeChilren(t *testing.T) {
 	sp, err := ipc.Socketpair()
 	assert.NoError(err)
 	channel.Writer <- &NodeMessage{
-		Message: `{"name":"parentWithHandle"}`,
+		Message: []byte(`{"name":"parentWithHandle"}`),
 		Handle:  sp[0],
 	}
 	msg = <-channel.Reader

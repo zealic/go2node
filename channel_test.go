@@ -46,7 +46,7 @@ func TestExecNode_Writer(t *testing.T) {
 	sp, err := ipc.Socketpair()
 	assert.NoError(err)
 	msg := &NodeMessage{
-		Message: `65535`,
+		Message: []byte(`65535`),
 		Handle:  sp[0],
 	}
 	channel.Writer <- msg

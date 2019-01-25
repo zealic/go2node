@@ -66,7 +66,7 @@ func (c *NodeChannel) read(
 				Data: []byte(`{"cmd":"NODE_HANDLE_ACK"}` + "\n"),
 			}
 			readChan <- &NodeMessage{
-				Message: string(rawMessage.Msg),
+				Message: rawMessage.Msg,
 				Handle:  msg.Files[0],
 			}
 		case "NODE_HANDLE_NACK":
