@@ -11,7 +11,7 @@ import (
 
 const nodeChannelFD = "NODE_CHANNEL_FD"
 
-const testFile = "channel_test.js"
+const testFile = "../testdata/ipc/channel_test.js"
 
 func execNodeFile(handler string) (*os.Process, Channel) {
 	cmd := exec.Command("node", testFile, handler)

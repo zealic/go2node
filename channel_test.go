@@ -10,7 +10,7 @@ import (
 	"github.com/zealic/go2node/ipc"
 )
 
-const testFile = "channel_test.js"
+const testFile = "testdata/channel_test.js"
 
 func execNodeFile(handler string) (*os.Process, NodeChannel) {
 	cmd := exec.Command("node", testFile, handler)
