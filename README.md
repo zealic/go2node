@@ -5,7 +5,7 @@
 
 Package go2node provides a simple API to inter-process communicating for go and node.
 
-go2node will *CREATE* or *RUN AS* Node child process with Node IPC channel protocol.
+go2node will **CREATE** or **RUN AS** Node child process with Node IPC protocol.
 
 
 ## Requirements
@@ -69,7 +69,7 @@ process.on('message', function (msg, handle) {
 process.send({hello: 'golang'});
 ```
 
-Compile `go build main.go` and run `./main` to test.
+Run `go run main.go` to test.
 
 ### Node to Golang
 
@@ -78,7 +78,7 @@ Compile `go build main.go` and run `./main` to test.
 ```node
 const child_process = require('child_process');
 
-let child = child_process.spawn('./gochild', [], {
+let child = child_process.spawn('go', ['run', 'gochild.go'], {
   stdio: [0, 1, 2, 'ipc']
 });
 
@@ -130,7 +130,7 @@ func main() {
 }
 ```
 
-Compile `go build gochild.go` and run `./main.js` to test.
+Run `node ./main.js` to test.
 
 
 ## Reference

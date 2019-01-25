@@ -1,0 +1,2 @@
+run:
+	node main.js
