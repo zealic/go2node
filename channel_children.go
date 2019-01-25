@@ -8,7 +8,7 @@ import (
 	"github.com/zealic/go2node/ipc"
 )
 
-// RunAsNodeChilren setup current process as node chilren process
+// RunAsNodeChilren setup current process as node children process
 func RunAsNodeChilren() (*NodeChannel, error) {
 	fdStr := os.Getenv(nodeChannelFD)
 	if len(fdStr) == 0 {

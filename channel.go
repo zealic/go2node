@@ -24,7 +24,7 @@ type rawNodeMessage struct {
 
 const nodeChannelFD = "NODE_CHANNEL_FD"
 
-// ExecNode execute new nodejs child process with ipc channel
+// ExecNode execute new nodejs child process with Node ipc channel
 func ExecNode(cmd *exec.Cmd) (*NodeChannel, error) {
 	ipcChannel, e := ipc.Exec(cmd, nodeChannelFD)
 	if e != nil {
@@ -98,7 +98,7 @@ func (c *NodeChannel) write(msgChan chan *NodeMessage) {
 			}
 		} else {
 			// Default use naked message
-			// NACK message will beo naked too
+			// NACK message will be naked too
 			ipcMsg = &ipc.Message{
 				Data:  []byte(msg.Message),
 				Files: []*os.File{msg.Handle},

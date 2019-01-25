@@ -2,7 +2,7 @@
 
 Package go2node provides a simple API to inter-process communicating for go and node.
 
-go2node will *CREATE* or *RUN AS* Node child process and use Node IPC channel communition protocol.
+go2node will *CREATE* or *RUN AS* Node child process with Node IPC channel protocol.
 
 
 ## Documentation
