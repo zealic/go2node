@@ -3,8 +3,7 @@ sudo: false
 go:
   - "1.11"
 env:
-  - GO111MODULE=on
-  - NODE_VERSION="10"
+  - GO111MODULE=on NODE_VERSION=10
 
 before_install:
   - wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
