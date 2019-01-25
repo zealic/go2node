@@ -17,9 +17,11 @@ func TestSendRecv(t *testing.T) {
 	err = Send(fds[0], &Message{Data: []byte("123")})
 	assert.NoError(err)
 
-	msg, err := Recv(fds[1])
+	buff := make([]byte, 1024)
+	n, _, err := Recv(fds[1], buff, 4)
 	assert.NoError(err)
-	require.Equal("123", string(msg.Data))
+	require.Equal(3, n)
+	require.Equal("123", string(buff[:3]))
 }
 
 func TestSendRecvWithFiles(t *testing.T) {
@@ -34,8 +36,10 @@ func TestSendRecvWithFiles(t *testing.T) {
 	})
 	assert.NoError(err)
 
-	msg, err := Recv(fds[1])
+	buff := make([]byte, 1024)
+	n, files, err := Recv(fds[1], buff, 4)
 	assert.NoError(err)
-	require.Equal("bilibili", string(msg.Data))
-	require.True(len(msg.Files) == 2)
+	require.Equal(8, n)
+	require.Equal("bilibili", string(buff[:8]))
+	require.True(len(files) == 2)
 }

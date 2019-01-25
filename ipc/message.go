@@ -22,30 +22,23 @@ type Message struct {
 // non-empty even if this function returns an error.
 //
 // Use net.FileConn() if you're receiving a network connection.
-func Recv(sock *os.File) (*Message, error) {
-	const buffSize int = 1024 * 64
-	const maxFdCap = 64
-
+func Recv(sock *os.File, buff []byte, fdCaps int) (int, []*os.File, error) {
 	sockFd := int(sock.Fd())
 
 	// recvmsg
 	var mbuf []byte
-	data := make([]byte, buffSize)
-	mbuf = make([]byte, syscall.CmsgSpace(maxFdCap*4))
-	n, oobn, _, _, err := syscall.Recvmsg(sockFd, data, mbuf, 0)
+	mbuf = make([]byte, syscall.CmsgSpace(fdCaps*4))
+	n, oobn, _, _, err := syscall.Recvmsg(sockFd, buff, mbuf, 0)
 	if err != nil {
-		return nil, err
-	}
-	if n < buffSize {
-		data = data[:n]
+		return 0, nil, err
 	}
 
 	files, err := parseCmsg(oobn, mbuf)
 	if err != nil {
-		return nil, err
+		return 0, nil, err
 	}
 
-	return &Message{data, files}, nil
+	return n, files, nil
 }
 
 func parseCmsg(oobn int, mbuf []byte) ([]*os.File, error) {

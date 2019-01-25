@@ -56,10 +56,12 @@ func newNodeChannel(ipc ipc.Channel) (NodeChannel, error) {
 
 func (c *nodeChannel) Read() (*NodeMessage, error) {
 	for {
-		ipcMsg, e := c.ipcChannel.Read()
+		ipcMsg, e := c.ipcChannel.ReadMessage('\n')
 		if e != nil {
 			return nil, e
 		}
+
+		// Handle internal message
 		intMsg := new(internalNodeMessage)
 		e = json.Unmarshal(ipcMsg.Data, intMsg)
 		if e != nil {
@@ -82,9 +84,9 @@ func (c *nodeChannel) handleInternalMsg(
 	var err error
 	switch intMsg.Cmd {
 	case "NODE_HANDLE":
-		err = c.ipcChannel.Write(&ipc.Message{
-			Data: []byte(`{"cmd":"NODE_HANDLE_ACK"}` + "\n"),
-		})
+		err = c.ipcChannel.WriteMessage(&ipc.Message{
+			Data: []byte(`{"cmd":"NODE_HANDLE_ACK"}`),
+		}, '\n')
 		if err != nil {
 			return nil, err
 		}
@@ -145,6 +147,5 @@ func (c *nodeChannel) Write(msg *NodeMessage) error {
 		}
 	}
 
-	ipcMsg.Data = append(ipcMsg.Data, '\n')
-	return c.ipcChannel.Write(ipcMsg)
+	return c.ipcChannel.WriteMessage(ipcMsg, '\n')
 }

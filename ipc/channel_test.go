@@ -34,7 +34,7 @@ func TestExec_Read(t *testing.T) {
 		proc.Kill()
 	}()
 
-	msg, err := channel.Read()
+	msg, err := channel.ReadMessage('\n')
 	require.NoError(err)
 	require.Equal(`{"hello":"123"}`+"\n", string(msg.Data))
 }
