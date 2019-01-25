@@ -25,9 +25,9 @@ func execNodeFile(handler string) (*os.Process, NodeChannel) {
 	return cmd.Process, channel
 }
 
-func TestExecNode_Reader(t *testing.T) {
+func TestExecNode_Read(t *testing.T) {
 	assert, require := assert.New(t), require.New(t)
-	proc, channel := execNodeFile("reader")
+	proc, channel := execNodeFile("read")
 	defer func() {
 		proc.Kill()
 	}()
@@ -37,9 +37,9 @@ func TestExecNode_Reader(t *testing.T) {
 	require.Equal(`{"black":"heart"}`, string(msg.Message))
 }
 
-func TestExecNode_Writer(t *testing.T) {
+func TestExecNode_Write(t *testing.T) {
 	assert, require := assert.New(t), require.New(t)
-	proc, channel := execNodeFile("writer")
+	proc, channel := execNodeFile("write")
 	defer func() {
 		proc.Kill()
 	}()

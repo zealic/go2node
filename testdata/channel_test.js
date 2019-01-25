@@ -1,18 +1,18 @@
 const METHOD = process.argv.slice(2)[0];
 
-function reader() {
+function read() {
   process.send({black: "heart"});
 }
 
-function writer() {
+function write() {
   process.on("message", function (msg, handle) {
     process.send({value:"6553588"}, handle);
   });
 }
 
 let methods = {
-  reader: reader,
-  writer: writer
+  read: read,
+  write: write
 };
 
 methods[METHOD]();

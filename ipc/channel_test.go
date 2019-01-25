@@ -26,10 +26,10 @@ func execNodeFile(handler string) (*os.Process, Channel) {
 	return cmd.Process, channel
 }
 
-func TestExec_Reader(t *testing.T) {
+func TestExec_Read(t *testing.T) {
 	_, require := assert.New(t), require.New(t)
 
-	proc, channel := execNodeFile("reader")
+	proc, channel := execNodeFile("read")
 	defer func() {
 		proc.Kill()
 	}()
