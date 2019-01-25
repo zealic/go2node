@@ -2,6 +2,7 @@ package go2node
 
 import (
 	"encoding/json"
+	"log"
 	"os"
 	"os/exec"
 
@@ -57,7 +58,7 @@ func (c *NodeChannel) read(
 		e := json.Unmarshal(msg.Data, rawMessage)
 		if e != nil {
 			//readChan <- normNodeMessage(msg)
-			panic(e)
+			log.Panic(e)
 		}
 
 		switch rawMessage.Cmd {
@@ -114,7 +115,7 @@ func (c *NodeChannel) write(msgChan chan *NodeMessage) {
 
 				data, e := json.Marshal(rawMsg)
 				if e != nil {
-					panic(e)
+					log.Panic(e)
 				}
 				ipcMsg.Data = data
 			}

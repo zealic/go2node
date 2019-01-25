@@ -54,7 +54,6 @@ func readIpcMessage(fd *os.File, msgChan chan *Message) {
 		message, err := Recv(fd)
 		if err != nil {
 			log.Panic(err)
-			break
 		}
 
 		msgChan <- message
@@ -67,7 +66,6 @@ func writeIpcMessage(fd *os.File, msgChan chan *Message) {
 		err := Send(fd, msg)
 		if err != nil {
 			log.Panic(err)
-			break
 		}
 	}
 }
