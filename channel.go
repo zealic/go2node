@@ -30,6 +30,7 @@ type internalNodeMessage struct {
 }
 
 const nodeChannelFD = "NODE_CHANNEL_FD"
+const nodeChannelDelim = '\n'
 
 // ExecNode execute new nodejs child process with Node ipc channel
 func ExecNode(cmd *exec.Cmd) (NodeChannel, error) {
@@ -56,7 +57,7 @@ func newNodeChannel(ipc ipc.Channel) (NodeChannel, error) {
 
 func (c *nodeChannel) Read() (*NodeMessage, error) {
 	for {
-		ipcMsg, e := c.ipcChannel.ReadMessage('\n')
+		ipcMsg, e := c.ipcChannel.ReadMessage(nodeChannelDelim)
 		if e != nil {
 			return nil, e
 		}
@@ -147,5 +148,5 @@ func (c *nodeChannel) Write(msg *NodeMessage) error {
 		}
 	}
 
-	return c.ipcChannel.WriteMessage(ipcMsg, '\n')
+	return c.ipcChannel.WriteMessage(ipcMsg, nodeChannelDelim)
 }
