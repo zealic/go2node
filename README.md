@@ -8,6 +8,12 @@ Package go2node provides a simple API to inter-process communicating for go and 
 go2node will *CREATE* or *RUN AS* Node child process with Node IPC channel protocol.
 
 
+## Requirements
+
+* Golang ≥ 1.11.x
+* Node.js ≥ 8.x
+
+
 ## Quick start
 
 ### Golang to Node
