@@ -71,6 +71,13 @@ process.send({hello: 'golang'});
 
 Run `go run main.go` to test.
 
+**Output**:
+
+```
+{"hello":"golang"}
+{ hello: 'node' }
+```
+
 ### Node to Golang
 
 `main.js`:
@@ -131,6 +138,13 @@ func main() {
 ```
 
 Run `node ./main.js` to test.
+
+**Output**:
+
+```
+{"hello":"child"}
+{ hello: 'parent' }
+```
 
 
 ## Reference
