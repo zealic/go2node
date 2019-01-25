@@ -3,8 +3,10 @@ package ipc
 import (
 	"os"
 	"os/exec"
-	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 const nodeChannelFD = "NODE_CHANNEL_FD"
@@ -25,14 +27,13 @@ func execNodeFile(handler string) (*os.Process, *Channel) {
 }
 
 func TestExec_Reader(t *testing.T) {
+	_, require := assert.New(t), require.New(t)
+
 	proc, channel := execNodeFile("reader")
 	defer func() {
 		proc.Kill()
 	}()
 
 	msg := <-channel.Reader
-	const expectedContent = "{\"hello\":\"123\"}\n"
-	if strings.Compare(string(msg.Data), expectedContent) != 0 {
-		t.Fatal("Message not matched: ", string(msg.Data))
-	}
+	require.Equal(`{"hello":"123"}`+"\n", string(msg.Data))
 }

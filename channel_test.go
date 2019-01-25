@@ -3,9 +3,10 @@ package go2node
 import (
 	"os"
 	"os/exec"
-	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/zealic/go2node/ipc"
 )
 
@@ -25,25 +26,25 @@ func execNodeFile(handler string) (*os.Process, *NodeChannel) {
 }
 
 func TestExecNode_Reader(t *testing.T) {
+	_, require := assert.New(t), require.New(t)
 	proc, channel := execNodeFile("reader")
 	defer func() {
 		proc.Kill()
 	}()
 
 	msg := <-channel.Reader
-	const expectedContent = `{"black":"heart"}`
-	if strings.Compare(string(msg.Message), expectedContent) != 0 {
-		t.Fatal("Message not matched: ", string(msg.Message))
-	}
+	require.Equal(`{"black":"heart"}`, string(msg.Message))
 }
 
 func TestExecNode_Writer(t *testing.T) {
+	assert, require := assert.New(t), require.New(t)
 	proc, channel := execNodeFile("writer")
 	defer func() {
 		proc.Kill()
 	}()
 
-	sp, _ := ipc.Socketpair()
+	sp, err := ipc.Socketpair()
+	assert.NoError(err)
 	msg := &NodeMessage{
 		Message: `65535`,
 		Handle:  sp[0],
@@ -51,10 +52,6 @@ func TestExecNode_Writer(t *testing.T) {
 	channel.Writer <- msg
 
 	msg = <-channel.Reader
-	if string(msg.Message) != `{"value":"6553588"}` {
-		t.Fatal("Message not matched: ", msg.Message)
-	}
-	if msg.Handle.Fd() == 0 {
-		t.Fatal("Handle is empty")
-	}
+	require.Equal(`{"value":"6553588"}`, string(msg.Message))
+	assert.NotNil(msg.Handle)
 }

@@ -2,7 +2,7 @@
 
 Package go2node provides a simple API to inter-process communicating for go and node.
 
-go2node will create Node child process and use Node IPC channel communition.
+go2node will *CREATE* or *RUN AS* Node child process and use Node IPC channel communition protocol.
 
 
 ## Documentation
@@ -16,3 +16,4 @@ go2node will create Node child process and use Node IPC channel communition.
 * https://github.com/nodejs/node/blob/master/lib/internal/child_process.js
 * https://github.com/nodejs/node/blob/master/src/stream_wrap.cc
 * https://github.com/libuv/libuv/blob/master/src/unix/stream.c
+* https://medium.com/js-imaginea/clustering-inter-process-communication-ipc-in-node-js-748f981214e9

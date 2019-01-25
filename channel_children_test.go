@@ -3,36 +3,32 @@
 package go2node
 
 import (
-	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/zealic/go2node/ipc"
 )
 
 func TestRunAsNodeChilren(t *testing.T) {
+	assert, require := assert.New(t), require.New(t)
+
 	channel, err := RunAsNodeChilren()
-	if err != nil {
-		panic(err)
-	}
+	assert.NoError(err)
 
 	// Parent
 	channel.Writer <- &NodeMessage{Message: `{"name":"parent"}`}
 	msg := <-channel.Reader
-	if strings.Compare(string(msg.Message), `{"say":"We are one!"}`) != 0 {
-		t.Fatal("Message not matched: ", string(msg.Message))
-	}
+	require.Equal(`{"say":"We are one!"}`, string(msg.Message))
 
 	// ParentWithHandle
-	sp, _ := ipc.Socketpair()
+	sp, err := ipc.Socketpair()
+	assert.NoError(err)
 	channel.Writer <- &NodeMessage{
 		Message: `{"name":"parentWithHandle"}`,
 		Handle:  sp[0],
 	}
 	msg = <-channel.Reader
-	if strings.Compare(string(msg.Message), `{"say":"For the Lich King!"}`) != 0 {
-		t.Fatal("Message not matched: ", string(msg.Message))
-	}
-	if msg.Handle == nil {
-		t.Fatal("Reply handle is required.")
-	}
+	require.Equal(`{"say":"For the Lich King!"}`, string(msg.Message))
+	assert.NotNil(msg.Handle)
 }
