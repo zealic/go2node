@@ -5,7 +5,7 @@ const METHOD = process.argv.slice(2)[0];
 function spawnTest() {
   let gtest = cp.spawn('go',
     ['test', '-tags', 'channel_children'], {
-      stdio: [0, 1, 2, 'ipc']
+      stdio: [1, 2, 3, 'ipc'] // ipc is required
     });
 
   gtest.on('close', (code) => {
