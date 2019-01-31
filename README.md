@@ -1,6 +1,6 @@
 [![Build Status][travis-image]][travis-url]
 [![GoDoc][godoc-image]][godoc-url]
-[![GitHub release](https://img.shields.io/github/release/zealic/go2node.svg)](https://github.com/zealic/go2node/releases/latest)
+[![GitHub release][release-image]][release-url]
 
 # go2node
 
@@ -156,7 +156,9 @@ Run `node ./main.js` to test.
 * https://github.com/libuv/libuv/blob/master/src/unix/stream.c
 * https://medium.com/js-imaginea/clustering-inter-process-communication-ipc-in-node-js-748f981214e9
 
-[travis-image]: https://travis-ci.org/zealic/go2node.svg
-[travis-url]:   https://travis-ci.org/zealic/go2node
-[godoc-image]:  https://godoc.org/github.com/zealic/go2node?status.svg
-[godoc-url]:    https://godoc.org/github.com/zealic/go2node
+[travis-image]:  https://travis-ci.org/zealic/go2node.svg
+[travis-url]:    https://travis-ci.org/zealic/go2node
+[godoc-image]:   https://godoc.org/github.com/zealic/go2node?status.svg
+[godoc-url]:     https://godoc.org/github.com/zealic/go2node
+[release-image]: https://img.shields.io/github/release/zealic/go2node.svg
+[release-url]:   https://github.com/zealic/go2node/releases/latest
