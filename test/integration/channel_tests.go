@@ -1,6 +1,6 @@
-// +build channel_child
+// +build integration
 
-package go2node
+package integration
 
 import (
 	"testing"

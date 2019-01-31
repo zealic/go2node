@@ -5,7 +5,11 @@ OUTPUT?=$(PROJECT_NAME)
 
 test:
 	@go test ./...
-	node testdata/channel_parent_test.js channel_child
+
+test-integration:
+	@sh -c "source test/integration/integration.sh"
 
 ensure:
 	@go mod download
+
+.PHONY: test test-integration
