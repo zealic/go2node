@@ -11,7 +11,7 @@ go2node will **CREATE** or **RUN AS** Node child process with Node IPC protocol.
 
 ## Requirements
 
-* Golang ≥ 1.11.x
+* Golang ≥ 1.12.x
 * Node.js ≥ 8.x
 
 
